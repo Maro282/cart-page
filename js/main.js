@@ -13,6 +13,7 @@ function displayCartData() {
     cartEmpty.classList.add("d-block");
     cartEmpty.classList.remove("d-none");
     cartItems.innerHTML = "";
+    displayClearCartBtn();
     return;
   }
 
@@ -106,6 +107,7 @@ function clearCart() {
   localStorage.removeItem("cart");
   displayCartData();
   updateSummary();
+  displayClearCartBtn();
 }
 
 // Save cart in localstorage
@@ -148,10 +150,10 @@ function updateQuantity(productId, newQuantity) {
 //update summary
 function updateSummary() {
   const cart = getDataFromLocalStorage();
+  const subtotal = document.querySelector(".subtotal");
+  const tax = document.querySelector(".tax");
+  const total = document.querySelector(".total");
   if (cart.length != 0) {
-    const subtotal = document.querySelector(".subtotal");
-    const tax = document.querySelector(".tax");
-    const total = document.querySelector(".total");
     const subtotalResult = cart.reduce((sum, p) => {
       return (sum += p.price * p.quantity);
     }, 0);
@@ -160,15 +162,29 @@ function updateSummary() {
     subtotal.innerHTML = `${subtotalResult} EGP`;
     tax.innerHTML = `${taxResult} EGP`;
     total.innerHTML = `${totalResult} EGP`;
+  } else {
+    subtotal.innerHTML = `0.00 EGP`;
+    tax.innerHTML = `0.00 EGP`;
+    total.innerHTML = `0.00 EGP`;
   }
 }
 
 // =========== Handle events =================
 window.addEventListener("DOMContentLoaded", () => {
   displayCartData();
+  displayClearCartBtn();
   updateSummary();
 });
 
 clearCartBtn.addEventListener("click", () => {
   clearCart();
 });
+
+function displayClearCartBtn() {
+  const cart = getDataFromLocalStorage();
+  if (cart.length == 0) {
+    clearCartBtn.classList.add("d-none");
+  } else {
+    clearCartBtn.classList.remove("d-none");
+  }
+}
